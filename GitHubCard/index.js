@@ -7,21 +7,21 @@ const { default: axios } = require("axios");
 */
 axios.get("https://api.github.com/users/JonathanMary")
                    .then(call => {
-                    step3(call.data);
-                    return call.data.followers_url;
+                      step3(call.data);
+                      return axios.get(call.data.followers_url);
+                   })
+                   .then(followers =>{
+                     let followArray = [];
+                     followers.data.forEach(obj => followArray.push(obj.login));
+                     followArray.forEach(id => {
+                       axios.get(`https://api.github.com/users/${id}`)
+                            .then(call => step3(call.data))
+                            .catch(err => console.log(err))
+                     })
                    })
                    .catch(err => console.log("Main call Error: ", err))
                    //Stretch: Create a function that requests the followers data
-                   .then(followers => {
-                     axios.get(followers)
-                          .then(call => {
-                            call.data.forEach(userObj => {
-                              console.log(userObj);
-                              step3(userObj);
-                            });
-                          })
-                          .catch(err => console.log("Followers call Error: ", err))
-                   });
+
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -45,13 +45,13 @@ axios.get("https://api.github.com/users/JonathanMary")
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
-
+/*
 const followersArray = ["tetondan", "dustinmyers", "justsml", "luishrd", "bigknell"];
 followersArray.forEach(id => {
   axios.get(`https://api.github.com/users/${id}`)
        .then(call => step3(call.data))
-       .catch(err => console.log(`Error: ${err}`))
-})
+       .catch(err => console.log(`followersArray: ${err}`))
+})*/
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
     Using DOM methods and properties, create and return the following markup:
