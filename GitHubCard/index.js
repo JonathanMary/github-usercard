@@ -7,11 +7,21 @@ const { default: axios } = require("axios");
 */
 axios.get("https://api.github.com/users/JonathanMary")
                    .then(call => {
-                     console.log(call.data);
-                     //console.log(call.data["login"]);
-                     step3(call.data);
+                    step3(call.data);
+                    return call.data.followers_url;
                    })
-                   .catch(err => console.log(err))
+                   .catch(err => console.log("Main call Error: ", err))
+                   //Stretch: Create a function that requests the followers data
+                   .then(followers => {
+                     axios.get(followers)
+                          .then(call => {
+                            call.data.forEach(userObj => {
+                              console.log(userObj);
+                              step3(userObj);
+                            });
+                          })
+                          .catch(err => console.log("Followers call Error: ", err))
+                   });
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -62,7 +72,6 @@ followersArray.forEach(id => {
     </div>
 */
 function step3 (obj){
-  console.log("inside step3: ", obj)
   //create all elements
   const card = document.createElement("div");
   const image = document.createElement("img");
@@ -86,8 +95,8 @@ function step3 (obj){
   username.textContent = `${obj.login}`;
   location.textContent = `Location: ${obj.location}`;
   profile.innerHTML = `Profile: `;
-  link.href = `{address to users github page}`;
-  link.textContent = `${obj.url}`;
+  link.href = `${obj.html_url}`;
+  link.textContent = `${obj.html_url}`;
   followers.textContent = `Followers: ${obj.followers}`;
   following.textContent = `Following: ${obj.following}`;
   bio.textContent = `Bio: ${obj.bio}`;
